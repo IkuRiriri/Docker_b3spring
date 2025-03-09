@@ -75,3 +75,51 @@ CONTAINER ID   IMAGE          COMMAND    CREATED          STATUS                
 ~~~
 
 ubuntuコンテナの他に終了済みのHelloWorldコンテナが確認できる．HelloWorldコンテナはメッセージの出力後，自動的に終了する．
+
+### コンテナの停止
+ubuntuコンテナを停止させてみよう．先ほどコンテナの一覧を表示させた際に，出力されたコンテナ名で指定することができる．
+
+~~~bash
+$ docker container stop jovial_burnell
+
+$ docker container ls --all
+CONTAINER ID   IMAGE          COMMAND    CREATED          STATUS                      PORTS   NAMES
+796c6a393008   hello-world    "/hello"   2 minutes ago    Exited (0) 2 minutes ago            elated_bell
+5caa85f1d8ea   ubuntu:latest  "bash"     3 minutes ago    Exited (0) 1 minutes ago            jovial_burnell
+~~~
+
+コンテナの一覧を確認すると，ubuntuコンテナのSTATUSが変化していることがわかる．また，対話操作をしていたターミナルを確認すると，コンテナが終了していることがわかる．
+
+### コンテナの削除
+先ほど停止したコンテナを削除してみよう．
+~~~bash
+$ docker container rm jovial_burnell
+
+$ docker container ls --all
+CONTAINER ID   IMAGE          COMMAND    CREATED          STATUS                      PORTS   NAMES
+796c6a393008   hello-world    "/hello"   2 minutes ago    Exited (0) 2 minutes ago            elated_bell
+~~~
+コンテナを削除することができた．
+
+なお，起動中のコンテナを直接削除したい場合は，`-f` コマンドをつけることで，強制的に削除することが可能である．
+
+## Dockerfileについて
+Dockerfile を使用することで，任意のイメージを作成することができる．また，配布が容易であり，どのようなコンテナであるかのドキュメント代わりにもなる．
+
+### Dockerfile の例
+`./dockerfile_example`はDockerを使用して作成した環境下で画像処理を行うサンプルプログラムである．実行してみよう．
+
+~~~bash
+$ cd dockerfile_example
+$ docker image build --rm –t mycv2 .
+$ docker container run --rm --mount type=bind,source=$(pwd),target=/app mycv2
+~~~
+
+`dockerfile_example/output`にそれぞれグレースケール画像とエッジ画像が出力されていることを確認したら，成功です．
+
+<details><summary>Dockerコマンドの解説</summary>
+
+`docker image build`で DockerfileからImageを作成することができる．`--rm`オプションは，途中で作成される中間Imageを削除するためのコマンドであり，`-t`オプションで作成したイメージに名前をつけることができる．
+
+今回使用するプログラムは，画像を出力するため，`--mount`オプションでバインドマウントを行ってコンテナ内のディレクトリとホストディレクトリを同期させている．
+</details>
